@@ -1,0 +1,51 @@
+DECISIONS LOG
+
+Fill this in as you work. This document is as important as your code.
+
+========================================
+TASK 1: REVIEW & REFACTOR
+========================================
+
+Issues I found:
+
+1. 
+2. 
+3. 
+4. 
+
+What I fixed (in priority order) and why:
+
+1. Issue: ...
+   Why this was the priority: ...
+
+2. Issue: ...
+   Why this was the priority: ...
+
+What I left unfixed and why:
+
+1. Issue: ...
+   Why I left it: ...
+
+========================================
+TASK 2: BUILD A FEATURE
+========================================
+
+Assumptions I made:
+
+1. 
+2. 
+3. 
+
+Design choices:
+
+API:
+- 
+
+Frontend:
+- 
+
+What I'd do differently with more time:
+
+1. 
+2. 
+3. 

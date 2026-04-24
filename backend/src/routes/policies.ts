@@ -13,19 +13,11 @@ router.get('/', async (req, res) => {
     if (status) where.status = status;
     if (type) where.type = type;
 
-    const policies = await prisma.policy.findMany({ where });
-
-    // Add agent name to each policy
-    const results = [];
-    for (const policy of policies) {
-      const agent = await prisma.agent.findUnique({
-        where: { id: policy.agentId }
-      });
-      results.push({
-        ...policy,
-        agentName: agent?.name || 'Unknown'
-      });
-    }
+    const policies = await prisma.policy.findMany({ where, include: { agent: true } });
+    const results = policies.map(({ agent, ...policy }) => ({
+      ...policy,
+      agentName: agent?.name || 'Unknown'
+    }));
 
     res.json(results);
   } catch (error) {
@@ -42,34 +34,24 @@ router.get('/expiring', async (req, res) => {
   const policies = await prisma.policy.findMany({
     where: {
       status: 'active',
-      endDate: {
-        gte: now,
-        lte: thirtyDaysFromNow
-      }
-    }
+      endDate: { gte: now, lte: thirtyDaysFromNow }
+    },
+    include: { agent: true }
   });
 
-  const results = [];
-  for (const policy of policies) {
-    const agent = await prisma.agent.findUnique({
-      where: { id: policy.agentId }
-    });
-    results.push({
-      ...policy,
-      agentName: agent?.name || 'Unknown'
-    });
-  }
+  const results = policies.map(({ agent, ...policy }) => ({
+    ...policy,
+    agentName: agent?.name || 'Unknown'
+  }));
 
   res.json(results);
 });
 
 // GET /policies/:id — get single policy
 router.get('/:id', async (req, res) => {
-  const policy = await prisma.policy.findUniqueOrThrow({
-    where: { id: Number(req.params.id) }
-  });
-  const agent = await prisma.agent.findUnique({
-    where: { id: policy.agentId }
+  const { agent, ...policy } = await prisma.policy.findUniqueOrThrow({
+    where: { id: Number(req.params.id) },
+    include: { agent: true }
   });
   res.json({ ...policy, agentName: agent?.name || 'Unknown' });
 });

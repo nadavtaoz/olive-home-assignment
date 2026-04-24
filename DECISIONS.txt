@@ -20,7 +20,12 @@ Issues I found:
 4. If someone hits /policies/abc, Number("abc") returns NaN. Prisma receives { id: NaN } — behavior is undefined and varies by DB driver. 
    There's no guard that returns a 400 before the query even runs. 
 
-5. Repeated use of hard coded string - 'Unknown' appears 3 times and a named constant is better than a repeated magic string.
+5. new PrismaClient() instantiated per module, Each module that does this creates its own connection pool. 
+   In a larger app with multiple route files, you end up with multiple pools competing for DB connections.
+
+6. Repeated use of hard coded string - 'Unknown' appears 3 times and a named constant is better than a repeated magic string.
+
+7. Const where: any = {}, use of "any" defeats TS entirely and considered bad practice.
 
 What I fixed (in priority order) and why:
 
@@ -34,12 +39,26 @@ What I fixed (in priority order) and why:
    This is especially dangerous with financial and insurance data where tampering can have legal and financial consequences. 
    Zod also enforces input validation (types, enums, required fields) that was missing entirely before.
 
-3.    
+3. Issue: Missing try/catch on /expiring and /:id can cause unhandled promise rejections that crash the Node process, 
+   and exposes raw Prisma error internals to the client instead of clean HTTP responses (e.g. 500 instead of 404 for a missing record). 
+   Ranked lower than N+1 and mass assignment because it only triggers on error paths rather than on every request, 
+   and a process crash is recoverable via a process manager like PM2 — whereas N+1 degrades every single request and 
+   mass assignment is a silent data integrity risk.
 
 What I left unfixed and why:
 
-1. Issue: ...
-   Why I left it: ...
+1. Issue: /:id doesn't have type safty for 'id' and the correct error handling.
+   Why I left it: Not critical as the 3 issues that where fixed, we still have the try / catch around.
+
+2. Issue: Usage of "any" in TypeScript.
+   Why I left it: Usage of any in TypeScript disables type checking on the where filter object, 
+   meaning invalid field names or values won't be caught at compile time. 
+   Left unfixed because it doesn't affect runtime behavior or business logic.
+
+3. Repeated use of hard coded string - 'Unknown'.
+   Why I left it: Left unfixed because the string is only used within this one file and never shared across modules, 
+   so the risk of inconsistency is minimal. 
+   Worth extracting to a constant if the codebase grows, but premature for the current scope.
 
 ========================================
 TASK 2: BUILD A FEATURE

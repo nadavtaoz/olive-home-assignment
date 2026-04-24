@@ -8,18 +8,33 @@ TASK 1: REVIEW & REFACTOR
 
 Issues I found:
 
-1. 
-2. 
-3. 
-4. 
+1. Most severe — Performance Killer: 
+   All three GET routes fetch policies, then fire a separate agent query per policy inside a loop. For 100 policies that's 101 DB roundtrips. 
+
+2. Unvalidated req.body passed directly to Prisma (mass assignment) in POST "/".
+   A client can inject any field — including id, agentId, status, or any future sensitive field — with no sanitization or schema validation.
+
+3. Missing try/catch in '/expiring' and '/:id' — any DB error becomes an unhandled promise rejection that can crash the Node process. 
+   /:id uses findUniqueOrThrow with no catch, so a missing ID returns a raw 500 with Prisma internals exposed to the client instead of a proper 404.
+
+4. If someone hits /policies/abc, Number("abc") returns NaN. Prisma receives { id: NaN } — behavior is undefined and varies by DB driver. 
+   There's no guard that returns a 400 before the query even runs. 
+
+5. Repeated use of hard coded string - 'Unknown' appears 3 times and a named constant is better than a repeated magic string.
 
 What I fixed (in priority order) and why:
 
-1. Issue: ...
-   Why this was the priority: ...
+1. Issue: Performance Killer
+   Why this was the priority: At scale, the N+1 problem degrades every single request to the list endpoints. 
+   It's a structural flaw that gets worse with data growth and can make the service effectively unusable under load.
 
-2. Issue: ...
-   Why this was the priority: ...
+2. Issue: Unvalidated req.body passed directly to Prisma (mass assignment) in POST "/"
+   Why this was the priority: Passing req.body directly to Prisma is a mass assignment risk — a client can set any field, 
+   including sensitive ones like status or agentId. 
+   This is especially dangerous with financial and insurance data where tampering can have legal and financial consequences. 
+   Zod also enforces input validation (types, enums, required fields) that was missing entirely before.
+
+3.    
 
 What I left unfixed and why:
 

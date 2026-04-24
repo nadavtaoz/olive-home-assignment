@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { CreatePolicySchema } from '../schemas/policies.schema';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -58,10 +59,12 @@ router.get('/:id', async (req, res) => {
 
 // POST /policies — create new policy
 router.post('/', async (req, res) => {
+  const parsed = CreatePolicySchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.issues });
+  }
   try {
-    const policy = await prisma.policy.create({
-      data: req.body
-    });
+    const policy = await prisma.policy.create({ data: parsed.data });
     res.status(201).json(policy);
   } catch (error: any) {
     res.status(500).json({ error: error.message });

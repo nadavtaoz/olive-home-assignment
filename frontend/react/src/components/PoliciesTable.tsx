@@ -1,9 +1,10 @@
 import Pagination from '../shared/components/Pagination';
-import type { Policy } from '../shared/types/policies.types';
+import type { Policy } from '../shared/types';
 
 interface Props {
   policies: Policy[];
   total: number;
+  offset: number;
   pageSize: number;
   onPageChange: (offset: number) => void;
 }
@@ -18,7 +19,7 @@ function isExpiringSoon(policy: Policy): boolean {
   return end >= now && end <= windowEnd;
 }
 
-function PoliciesTable({ policies, total, pageSize, onPageChange }: Props) {
+function PoliciesTable({ policies, total, offset, pageSize, onPageChange }: Props) {
   return (
     <div>
       <table className="data-table">
@@ -47,7 +48,7 @@ function PoliciesTable({ policies, total, pageSize, onPageChange }: Props) {
           ))}
         </tbody>
       </table>
-      <Pagination total={total} pageSize={pageSize} onPageChange={onPageChange} />
+      <Pagination total={total} pageSize={pageSize} currentPage={Math.floor(offset / pageSize)} onPageChange={onPageChange} />
     </div>
   );
 }

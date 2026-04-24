@@ -102,9 +102,19 @@ API:
 Frontend:
 -  Created these components - AgentsTable, PoliciesTable, Pagination (shared)
 
--  Export api calls to a separete service file (agents-service.ts)
+-  Extracted API calls to a separate service file (agents-service.ts)
 
--  Split policies into two tables, active and non-active policies. policies that are about to expire are dye in warning color.
+-  Split policies into two tables, active and non-active policies. policies that are about to expire are highlighted in a warning color.
+
+-  Use custom hook useGetPolicies to encapsulate logic.
+
+-  Offset-based pagination with a configurable page size constant
+
+-  TypeScript interfaces for all entities (Agent, Policy, etc.) with union types for status/type fields
+
+-  Master-detail layout — selecting an agent loads its policies; state is held at the App root level and passed down
+
+-  Local state only — no external state management library (Redux/Zustand); useState/useEffect throughout
 
 What I'd do differently with more time:
 

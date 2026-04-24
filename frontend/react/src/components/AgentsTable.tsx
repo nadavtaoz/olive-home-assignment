@@ -1,4 +1,4 @@
-import type { Agent } from '../shared/types/agents.types';
+import type { Agent } from '../shared/types';
 
 interface Props {
   agents: Agent[];
@@ -16,7 +16,7 @@ function AgentsTable({ agents, onAgentClick }: Props) {
         </tr>
       </thead>
       <tbody>
-        {agents?.map((agent) => (
+        {agents.map((agent) => (
           <tr key={agent.id} onClick={() => onAgentClick(agent)}>
             <td>{agent.id}</td>
             <td>{agent.name}</td>

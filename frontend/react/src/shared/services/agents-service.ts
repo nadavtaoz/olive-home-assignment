@@ -1,5 +1,4 @@
-import type { Agent } from '../types/agents.types';
-import type { AgentPoliciesResponse, PolicyStatus } from '../types/policies.types';
+import type { Agent, AgentPoliciesResponse, PolicyStatus } from '../types';
 
 export async function getAllAgents(): Promise<Agent[]> {
   const res = await fetch('/agents');

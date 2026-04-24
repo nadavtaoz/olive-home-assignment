@@ -2,11 +2,12 @@ import type { Agent } from '../shared/types/agents.types';
 
 interface Props {
   agents: Agent[];
+  onAgentClick: (agent: Agent) => void;
 }
 
-function AgentsTable({ agents }: Props) {
+function AgentsTable({ agents, onAgentClick }: Props) {
   return (
-    <table className="agents-table">
+    <table className="data-table clickable">
       <thead>
         <tr>
           <th>ID</th>
@@ -16,7 +17,7 @@ function AgentsTable({ agents }: Props) {
       </thead>
       <tbody>
         {agents?.map((agent) => (
-          <tr key={agent.id}>
+          <tr key={agent.id} onClick={() => onAgentClick(agent)}>
             <td>{agent.id}</td>
             <td>{agent.name}</td>
             <td>{agent.email}</td>

@@ -107,3 +107,5 @@ What I'd do differently with more time:
 1. Create a login page for an agent using email + password
 2. Create an auth login route for agent whilst receiving jwt token and keeping it etc.
 3. Add loader for a nicer feel for users.
+4. Use components from a components library like "base-ui" or "radix-ui"
+5. Use a Zustand store for some of the states

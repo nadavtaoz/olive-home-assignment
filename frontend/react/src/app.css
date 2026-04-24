@@ -47,7 +47,7 @@ h2 {
   margin: 0 auto;
 }
 
-.agents-table {
+.data-table {
   border: 1px solid var(--color-primary-border);
   border-radius: var(--radius);
   padding: 6px;
@@ -55,14 +55,14 @@ h2 {
   width: 100%;
 }
 
-.agents-table tr {
-  cursor: pointer;
-}
-
-.agents-table th {
+.data-table th {
   text-align: left;
 }
 
-.agents-table tr:hover {
+.data-table.clickable tr {
+  cursor: pointer;
+}
+
+.data-table.clickable tr:hover {
   background-color: var(--color-text-secondary);
 }

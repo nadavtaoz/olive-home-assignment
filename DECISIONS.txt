@@ -100,7 +100,11 @@ API:
    AgentPoliciesQuerySchema coerces size/offset from strings to numbers (query params are always strings), applies defaults, and whitelists sortBy to actual model fields — preventing injection of arbitrary Prisma orderBy keys. Consistent with how the existing POST /policies uses CreatePolicySchema.
 
 Frontend:
-- 
+-  Created these components - AgentsTable, PoliciesTable, Pagination (shared)
+
+-  Export api calls to a separete service file (agents-service.ts)
+
+-  Split policies into two tables, active and non-active policies. policies that are about to expire are dye in warning color.
 
 What I'd do differently with more time:
 
@@ -109,3 +113,5 @@ What I'd do differently with more time:
 3. Add loader for a nicer feel for users.
 4. Use components from a components library like "base-ui" or "radix-ui"
 5. Use a Zustand store for some of the states
+6. Use ReactQuery instead of using the methods in the agents-service directly
+7. Improve UI look and feel

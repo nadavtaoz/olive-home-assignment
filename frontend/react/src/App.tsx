@@ -11,9 +11,14 @@ function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-  const [policies, setPolicies] = useState<Policy[]>([]);
-  const [total, setTotal] = useState(0);
-  const [offset, setOffset] = useState(0);
+
+  const [activePolicies, setActivePolicies] = useState<Policy[]>([]);
+  const [activeTotal, setActiveTotal] = useState(0);
+  const [activeOffset, setActiveOffset] = useState(0);
+
+  const [inactivePolicies, setInactivePolicies] = useState<Policy[]>([]);
+  const [inactiveTotal, setInactiveTotal] = useState(0);
+  const [inactiveOffset, setInactiveOffset] = useState(0);
 
   useEffect(() => {
     getAllAgents().then(setAgents).catch(() => setError('Failed to load agents'));
@@ -23,20 +28,38 @@ function App() {
     if (!selectedAgent) return;
     getAgentPolicies(selectedAgent.id, {
       size: PAGE_SIZE,
-      offset,
+      offset: activeOffset,
       sortBy: 'endDate',
       sort: 'asc',
+      status: 'active',
     })
       .then((res) => {
-        setPolicies(res.data);
-        setTotal(res.total);
+        setActivePolicies(res.data);
+        setActiveTotal(res.total);
       })
-      .catch(() => setError('Failed to load policies'));
-  }, [selectedAgent, offset]);
+      .catch(() => setError('Failed to load active policies'));
+  }, [selectedAgent, activeOffset]);
+
+  useEffect(() => {
+    if (!selectedAgent) return;
+    getAgentPolicies(selectedAgent.id, {
+      size: PAGE_SIZE,
+      offset: inactiveOffset,
+      sortBy: 'endDate',
+      sort: 'asc',
+      status: ['expired', 'cancelled'],
+    })
+      .then((res) => {
+        setInactivePolicies(res.data);
+        setInactiveTotal(res.total);
+      })
+      .catch(() => setError('Failed to load non-active policies'));
+  }, [selectedAgent, inactiveOffset]);
 
   const handleAgentClick = (agent: Agent) => {
     setSelectedAgent(agent);
-    setOffset(0);
+    setActiveOffset(0);
+    setInactiveOffset(0);
   };
 
   return (
@@ -52,13 +75,21 @@ function App() {
               <AgentsTable agents={agents} onAgentClick={handleAgentClick} />
               {selectedAgent && (
                 <div>
-                  <h2>Policies for {selectedAgent.name}</h2>
+                  <h2>Active Policies for {selectedAgent.name}</h2>
                   <PoliciesTable
-                    key={selectedAgent.id}
-                    policies={policies}
-                    total={total}
+                    key={`${selectedAgent.id}-active`}
+                    policies={activePolicies}
+                    total={activeTotal}
                     pageSize={PAGE_SIZE}
-                    onPageChange={setOffset}
+                    onPageChange={setActiveOffset}
+                  />
+                  <h2>Non-Active Policies for {selectedAgent.name}</h2>
+                  <PoliciesTable
+                    key={`${selectedAgent.id}-inactive`}
+                    policies={inactivePolicies}
+                    total={inactiveTotal}
+                    pageSize={PAGE_SIZE}
+                    onPageChange={setInactiveOffset}
                   />
                 </div>
               )}

@@ -6,6 +6,8 @@
   --color-primary: #2563eb;
   --color-border: #e5e7eb;
   --color-primary-border: #1a1a1a;
+  --color-danger: #dc3545;
+  --color-warning: #ff9900;
   --radius: 8px;
 }
 
@@ -65,4 +67,8 @@ h2 {
 
 .data-table.clickable tr:hover {
   background-color: var(--color-text-secondary);
+}
+
+.data-table tr.expires-soon {
+  background-color: var(--color-warning);
 }

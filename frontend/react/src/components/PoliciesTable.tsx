@@ -8,6 +8,16 @@ interface Props {
   onPageChange: (offset: number) => void;
 }
 
+const EXPIRY_WINDOW_DAYS = 30;
+
+function isExpiringSoon(policy: Policy): boolean {
+  if (policy.status !== 'active') return false;
+  const now = Date.now();
+  const end = new Date(policy.endDate).getTime();
+  const windowEnd = now + EXPIRY_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+  return end >= now && end <= windowEnd;
+}
+
 function PoliciesTable({ policies, total, pageSize, onPageChange }: Props) {
   return (
     <div>
@@ -25,7 +35,7 @@ function PoliciesTable({ policies, total, pageSize, onPageChange }: Props) {
         </thead>
         <tbody>
           {policies.map((policy) => (
-            <tr key={policy.id}>
+            <tr key={policy.id} className={isExpiringSoon(policy) ? 'expires-soon' : undefined}>
               <td>{policy.policyNumber}</td>
               <td>{policy.holderName}</td>
               <td>{policy.insurerName}</td>

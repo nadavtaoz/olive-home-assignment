@@ -26,7 +26,7 @@ router.get('/:agentId/policies', async (req, res) => {
   const { size, offset, sortBy, sort, status, type } = parsed.data;
 
   const where: Record<string, unknown> = { agentId };
-  if (status) where.status = status;
+  if (status) where.status = Array.isArray(status) ? { in: status } : status;
   if (type) where.type = type;
 
   try {

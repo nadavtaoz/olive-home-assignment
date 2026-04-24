@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PrismaClient, Prisma } from '@prisma/client';
-import { CreatePolicySchema } from '../schemas/policies.schema';
+import { CreatePolicySchema } from '../schemas';
 
 const router = Router();
 const prisma = new PrismaClient();

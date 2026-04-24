@@ -73,7 +73,28 @@ Assumptions I made:
 Design choices:
 
 API:
-- 
+
+-  Added a new route prefix - agents.
+   Rather than adding agent-scoped routes under the existing /policies prefix (e.g. /policies?agentId=...), a dedicated /agents router was introduced. 
+   This reflects the resource hierarchy: an agent is considered in my view as a first-class entity (not at the current code but it's trivial for this system), 
+   and their policies are a sub-resource of that entity — /agents/:agentId/policies reads naturally as "the policies belonging to this agent."
+
+-  Nested resource route instead of a query param:
+   Chose GET /agents/:agentId/policies instead of adding agentId as a filter to the existing GET /policies. 
+   The agent is the primary context for this feature — a nested route makes that explicit and non-optional, 
+   preventing accidental calls that return all policies with no agent scope.
+
+-  No separate expiring endpoint:
+   Decided against GET /agents/:agentId/expiring-policies. The task asks for one page that shows all policies and highlights the ones needing attention.
+   A second endpoint would mean two calls returning the same data model with overlapping results.
+   Instead, the single endpoint supports sortBy=endDate&sort=asc so expiring policies naturally surface at the top, 
+   and the frontend highlights rows where endDate falls within the next 30 days — a simple date check on data already in the response.
+
+-  Pagination and sorting as query params:
+   Added size, offset, sortBy, sort. With ~200 clients per agent, returning everything at once is impractical. Offset-based pagination is straightforward and sufficient at this scale (no need for cursor-based).
+
+-  Zod validation on query params:
+   AgentPoliciesQuerySchema coerces size/offset from strings to numbers (query params are always strings), applies defaults, and whitelists sortBy to actual model fields — preventing injection of arbitrary Prisma orderBy keys. Consistent with how the existing POST /policies uses CreatePolicySchema.
 
 Frontend:
 - 

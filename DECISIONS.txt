@@ -66,9 +66,12 @@ TASK 2: BUILD A FEATURE
 
 Assumptions I made:
 
-1. 
-2. 
-3. 
+1. There's a table in the db for agents.
+2. In that table the agent id is unique.
+3. The agent ID is known to the frontend at page load (e.g. from a session/auth token or URL param) — the endpoint requires it, 
+   so the client must have it before making the call.
+4. An unknown agentId returning empty results (rather than a 404) is acceptable — 
+   there's no auth/access-control layer that needs to distinguish "agent doesn't exist" from "agent has no policies."   
 
 Design choices:
 
@@ -101,6 +104,6 @@ Frontend:
 
 What I'd do differently with more time:
 
-1. 
-2. 
-3. 
+1. Create a login page for an agent using email + password
+2. Create an auth login route for agent whilst receiving jwt token and keeping it etc.
+3. Add loader for a nicer feel for users.

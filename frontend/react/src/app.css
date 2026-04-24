@@ -5,6 +5,7 @@
   --color-text-secondary: #6b7280;
   --color-primary: #2563eb;
   --color-border: #e5e7eb;
+  --color-primary-border: #1a1a1a;
   --radius: 8px;
 }
 
@@ -21,6 +22,10 @@ body {
   line-height: 1.5;
 }
 
+h2 {
+  margin-bottom: 8px;
+}
+
 .app {
   min-height: 100vh;
 }
@@ -34,10 +39,30 @@ body {
 .header h1 {
   font-size: 1.25rem;
   font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+}
+
+.agents-table {
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius);
+  padding: 6px;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.agents-table tr {
+  cursor: pointer;
+}
+
+.agents-table th {
+  text-align: left;
+}
+
+.agents-table tr:hover {
+  background-color: var(--color-text-secondary);
 }

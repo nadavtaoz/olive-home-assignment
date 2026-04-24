@@ -5,6 +5,16 @@ import { AgentPoliciesQuerySchema } from '../schemas';
 const router = Router();
 const prisma = new PrismaClient();
 
+// GET /agents
+router.get('/', async (_req, res) => {
+  try {
+    const agents = await prisma.agent.findMany();
+    res.json(agents);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch agents' });
+  }
+});
+
 // GET /agents/:agentId/policies
 router.get('/:agentId/policies', async (req, res) => {
   const parsed = AgentPoliciesQuerySchema.safeParse(req.query);
